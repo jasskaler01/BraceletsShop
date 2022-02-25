@@ -20,18 +20,35 @@ namespace BraceletsShop.Controllers
         }
 
         // GET: Bracelets
-       public async Task<IActionResult> Index(string searchString)
-{
-    var bracelet = from m in _context.Bracelet
-                 select m;
+       
+        public async Task<IActionResult> Index(string braceletCat, string searchString)
+        {
+            // Use LINQ to get list of genres.
+            IQueryable<string> genreQuery = from m in _context.Bracelet
+                                            orderby m.Category
+                                            select m.Category;
 
-    if (!String.IsNullOrEmpty(searchString))
-    {
-        bracelet = bracelet.Where(s => s.Material.Contains(searchString));
-    }
+            var bracelet = from m in _context.Bracelet
+                         select m;
 
-    return View(await bracelet.ToListAsync());
-}
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                bracelet = bracelet.Where(s => s.Category.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(braceletCat))
+            {
+                bracelet = bracelet.Where(x => x.Category == braceletCat);
+            }
+
+            var braceletCatVM = new BraceletCatViewModel
+            {
+                Category = new SelectList(await genreQuery.Distinct().ToListAsync()),
+                Bracelets = await bracelet.ToListAsync()
+            };
+
+            return View(braceletCatVM);
+        }
 
         // GET: Bracelets/Details/5
         public async Task<IActionResult> Details(int? id)
