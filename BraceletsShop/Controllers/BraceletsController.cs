@@ -20,10 +20,18 @@ namespace BraceletsShop.Controllers
         }
 
         // GET: Bracelets
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Bracelet.ToListAsync());
-        }
+       public async Task<IActionResult> Index(string searchString)
+{
+    var bracelet = from m in _context.Bracelet
+                 select m;
+
+    if (!String.IsNullOrEmpty(searchString))
+    {
+        bracelet = bracelet.Where(s => s.Material.Contains(searchString));
+    }
+
+    return View(await bracelet.ToListAsync());
+}
 
         // GET: Bracelets/Details/5
         public async Task<IActionResult> Details(int? id)
