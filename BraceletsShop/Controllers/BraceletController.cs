@@ -12,5 +12,12 @@ namespace BraceletsShop.Controllers
         {
             return View();
         }
+        public IActionResult Aboutus(string name, int numTimes = 1)
+        {
+            ViewData["Message"] = "Hello " + name;
+            ViewData["NumTimes"] = numTimes;
+
+            return View();
+        }
     }
 }
